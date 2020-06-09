@@ -34,7 +34,9 @@ class TroutBot(Player):
 
     def handle_game_start(self, color: Color, board: chess.Board, opponent_name: str):
         self.board = board
+        print(board)
         self.color = color
+        print(color)
 
     def handle_opponent_move_result(self, captured_my_piece: bool, capture_square: Optional[Square]):
         # if the opponent captured our piece, remove it from our board.
@@ -79,6 +81,7 @@ class TroutBot(Player):
             self.board.turn = self.color
             self.board.clear_stack()
             result = self.engine.play(self.board, chess.engine.Limit(time=0.5))
+            print(result)
             return result.move
         except chess.engine.EngineTerminatedError:
             print('Stockfish Engine died')
