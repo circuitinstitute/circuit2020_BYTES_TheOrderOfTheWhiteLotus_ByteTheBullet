@@ -46,6 +46,8 @@ class TroutBot(Player):
             Optional[Square]:
         # if our piece was just captured, sense where it was captured
         if self.my_piece_captured_square:
+            global LAST_CAPTURED
+            LAST_CAPTURED = self.my_piece_captured_square
             return self.my_piece_captured_square
 
         # if we might capture a piece when we move, sense where the capture will occur
@@ -74,6 +76,12 @@ class TroutBot(Player):
                 attacker_square = enemy_king_attackers.pop()
                 return chess.Move(attacker_square, enemy_king_square)
 
+        elif LAST_CAPTURED:
+            capture = self.board.attackers(self.color, LAST_CAPTURED)
+            if capture:
+                attacker_square = capture.pop()
+                return chess.Move(attacker_square, LAST_CAPTURED)
+
         # otherwise, try to move with the stockfish chess engine
         try:
             self.board.turn = self.color
@@ -93,6 +101,7 @@ class TroutBot(Player):
         # if a move was executed, apply it to our board
         if taken_move is not None:
             self.board.push(taken_move)
+
     def get_queen(self, move_actions: List[chess.Move], seconds_left: float) -> Optional[chess.Move]:
         enemy_queen_square = self.board.queen(not self.color)
         if enemy_queen_square:
